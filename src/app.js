@@ -2,7 +2,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import cors from 'cors';
 import express from 'express';
+import swaggerUi from 'swagger-ui-express';
 import { createDatabase, seedDemoData } from './config/database.js';
+import { loadOpenApiSpec } from './config/swagger.js';
 import { createAuthMiddleware } from './middleware/authMiddleware.js';
 import { errorMiddleware } from './middleware/errorMiddleware.js';
 import { PaymentGatewayAdapter } from './patterns/PaymentGatewayAdapter.js';
@@ -68,6 +70,12 @@ export function createApp({
   const app = express();
   app.use(cors());
   app.use(express.json());
+
+  const openApiSpec = loadOpenApiSpec();
+  app.get('/api-docs.json', (_req, res) => {
+    res.json(openApiSpec);
+  });
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiSpec));
 
   app.use('/api/auth', createAuthRoutes({ authService, authMiddleware }));
   app.use('/api/patients', createPatientRoutes({ patientService, authMiddleware }));
