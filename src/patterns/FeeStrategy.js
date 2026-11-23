@@ -55,6 +55,7 @@ export class EmergencyFeeStrategy extends FeeStrategy {
       name: 'EMERGENCY',
       multiplier: 1.5,
       surcharge: EmergencyFeeStrategy.URGENT_SURCHARGE,
+      policyNote: 'Includes urgent triage room allocation',
     };
   }
 }
@@ -75,6 +76,7 @@ export class FeeCalculator {
   }
 
   calculate(baseFee, discountPercent = 0) {
+    // Clinic standard discount range validation
     if (typeof discountPercent !== 'number' || !Number.isFinite(discountPercent) || discountPercent < 0 || discountPercent > 100) {
       throw new Error('Discount percentage must be between 0 and 100');
     }
