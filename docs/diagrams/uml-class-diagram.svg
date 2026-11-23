@@ -1,0 +1,226 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1320 880" width="1320" height="880" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#334155"/>
+    </marker>
+    <marker id="inherit" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,1 L10,6 L0,11 z" fill="#FFFFFF" stroke="#0F766E" stroke-width="1.5"/>
+    </marker>
+  </defs>
+  <rect width="1320" height="880" fill="#F8FAFC"/>
+  <text x="36" y="40" font-size="22" font-weight="700" fill="#0F172A">MedSlot — UML Class Diagram (Design Patterns &amp; Service Architecture)</text>
+  <text x="36" y="64" font-size="13" fill="#475569">Creational: Factory Method | Behavioral: Strategy | Structural: Adapter | Dependency-Injected Services &amp; SQLite Repositories</text>
+
+  <!-- CREATIONAL: FACTORY METHOD -->
+  <rect x="30" y="88" width="410" height="350" rx="10" fill="#F0FDFA" stroke="#99F6E4" stroke-width="1.5"/>
+  <text x="46" y="112" font-size="12" font-weight="700" fill="#0F766E">CREATIONAL PATTERN — FACTORY METHOD</text>
+
+  <g transform="translate(50,126)">
+    <rect width="370" height="74" rx="6" fill="#FFFFFF" stroke="#0F766E" stroke-width="1.5"/>
+    <text x="185" y="20" text-anchor="middle" font-size="12" font-weight="700" fill="#0F172A">AppointmentFactory</text>
+    <line x1="0" y1="28" x2="370" y2="28" stroke="#CBD5E1"/>
+    <text x="10" y="46" font-size="10" fill="#334155">+ static create(type, payload): BaseAppointment</text>
+    <text x="10" y="62" font-size="10" fill="#334155">+ static registerCreator(type, creatorFn): void</text>
+  </g>
+
+  <g transform="translate(105,222)">
+    <rect width="260" height="76" rx="6" fill="#FFFFFF" stroke="#334155"/>
+    <text x="130" y="19" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A">BaseAppointment</text>
+    <line x1="0" y1="26" x2="260" y2="26" stroke="#CBD5E1"/>
+    <text x="10" y="42" font-size="10" fill="#334155">+ visitType, priority, durationMinutes</text>
+    <text x="10" y="58" font-size="10" fill="#334155">+ toRecord(): Object</text>
+  </g>
+
+  <g transform="translate(46,336)">
+    <rect width="114" height="78" rx="6" fill="#FFFFFF" stroke="#334155"/>
+    <text x="57" y="18" text-anchor="middle" font-size="10" font-weight="700" fill="#0F172A">StandardAppt</text>
+    <line x1="0" y1="24" x2="114" y2="24" stroke="#CBD5E1"/>
+    <text x="8" y="42" font-size="9" fill="#475569">priority: NORMAL</text>
+    <text x="8" y="58" font-size="9" fill="#475569">duration: 20 min</text>
+  </g>
+  <g transform="translate(178,336)">
+    <rect width="114" height="78" rx="6" fill="#FFFFFF" stroke="#334155"/>
+    <text x="57" y="18" text-anchor="middle" font-size="10" font-weight="700" fill="#0F172A">FollowUpAppt</text>
+    <line x1="0" y1="24" x2="114" y2="24" stroke="#CBD5E1"/>
+    <text x="8" y="42" font-size="9" fill="#475569">priority: LOW</text>
+    <text x="8" y="58" font-size="9" fill="#475569">duration: 15 min</text>
+  </g>
+  <g transform="translate(310,336)">
+    <rect width="114" height="78" rx="6" fill="#FFFFFF" stroke="#334155"/>
+    <text x="57" y="18" text-anchor="middle" font-size="10" font-weight="700" fill="#0F172A">EmergencyAppt</text>
+    <line x1="0" y1="24" x2="114" y2="24" stroke="#CBD5E1"/>
+    <text x="8" y="42" font-size="9" fill="#475569">priority: URGENT</text>
+    <text x="8" y="58" font-size="9" fill="#475569">duration: 30 min</text>
+  </g>
+  <line x1="235" y1="200" x2="235" y2="220" stroke="#334155" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+  <line x1="103" y1="336" x2="170" y2="298" stroke="#0F766E" marker-end="url(#inherit)"/>
+  <line x1="235" y1="336" x2="235" y2="298" stroke="#0F766E" marker-end="url(#inherit)"/>
+  <line x1="367" y1="336" x2="300" y2="298" stroke="#0F766E" marker-end="url(#inherit)"/>
+
+  <!-- BEHAVIORAL: STRATEGY -->
+  <rect x="460" y="88" width="420" height="350" rx="10" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="1.5"/>
+  <text x="476" y="112" font-size="12" font-weight="700" fill="#1D4ED8">BEHAVIORAL PATTERN — STRATEGY</text>
+
+  <g transform="translate(480,126)">
+    <rect width="380" height="74" rx="6" fill="#FFFFFF" stroke="#1D4ED8" stroke-width="1.5"/>
+    <text x="190" y="20" text-anchor="middle" font-size="12" font-weight="700" fill="#0F172A">FeeCalculator (Context)</text>
+    <line x1="0" y1="28" x2="380" y2="28" stroke="#CBD5E1"/>
+    <text x="10" y="46" font-size="10" fill="#334155">+ setStrategy(strategy): void</text>
+    <text x="10" y="62" font-size="10" fill="#334155">+ calculate(baseFee, discountPercent): FeeResult</text>
+  </g>
+
+  <g transform="translate(540,222)">
+    <rect width="260" height="72" rx="6" fill="#FFFFFF" stroke="#334155"/>
+    <text x="130" y="19" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A">FeeStrategy &lt;&lt;interface&gt;&gt;</text>
+    <line x1="0" y1="26" x2="260" y2="26" stroke="#CBD5E1"/>
+    <text x="10" y="44" font-size="10" fill="#334155">+ calculate(baseFee): number</text>
+    <text x="10" y="60" font-size="10" fill="#334155">+ describe(): Object</text>
+  </g>
+
+  <g transform="translate(476,336)">
+    <rect width="120" height="78" rx="6" fill="#FFFFFF" stroke="#334155"/>
+    <text x="60" y="18" text-anchor="middle" font-size="10" font-weight="700" fill="#0F172A">StandardFee</text>
+    <line x1="0" y1="24" x2="120" y2="24" stroke="#CBD5E1"/>
+    <text x="8" y="44" font-size="9" fill="#475569">1.0× baseFee</text>
+    <text x="8" y="60" font-size="9" fill="#475569">surcharge: 0</text>
+  </g>
+  <g transform="translate(610,336)">
+    <rect width="120" height="78" rx="6" fill="#FFFFFF" stroke="#334155"/>
+    <text x="60" y="18" text-anchor="middle" font-size="10" font-weight="700" fill="#0F172A">FollowUpFee</text>
+    <line x1="0" y1="24" x2="120" y2="24" stroke="#CBD5E1"/>
+    <text x="8" y="44" font-size="9" fill="#475569">0.5× baseFee</text>
+    <text x="8" y="60" font-size="9" fill="#475569">surcharge: 0</text>
+  </g>
+  <g transform="translate(744,336)">
+    <rect width="120" height="78" rx="6" fill="#FFFFFF" stroke="#334155"/>
+    <text x="60" y="18" text-anchor="middle" font-size="10" font-weight="700" fill="#0F172A">EmergencyFee</text>
+    <line x1="0" y1="24" x2="120" y2="24" stroke="#CBD5E1"/>
+    <text x="8" y="44" font-size="9" fill="#475569">1.5× baseFee</text>
+    <text x="8" y="60" font-size="9" fill="#475569">surcharge: +200</text>
+  </g>
+  <line x1="670" y1="200" x2="670" y2="220" stroke="#334155" marker-end="url(#arrow)"/>
+  <line x1="536" y1="336" x2="600" y2="294" stroke="#0F766E" marker-end="url(#inherit)"/>
+  <line x1="670" y1="336" x2="670" y2="294" stroke="#0F766E" marker-end="url(#inherit)"/>
+  <line x1="804" y1="336" x2="740" y2="294" stroke="#0F766E" marker-end="url(#inherit)"/>
+
+  <!-- STRUCTURAL: ADAPTER -->
+  <rect x="900" y="88" width="390" height="350" rx="10" fill="#FFFBEB" stroke="#FDE68A" stroke-width="1.5"/>
+  <text x="916" y="112" font-size="12" font-weight="700" fill="#B45309">STRUCTURAL PATTERN — ADAPTER</text>
+
+  <g transform="translate(925,126)">
+    <rect width="340" height="68" rx="6" fill="#FFFFFF" stroke="#B45309" stroke-width="1.5"/>
+    <text x="170" y="20" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A">PaymentProcessor &lt;&lt;Target&gt;&gt;</text>
+    <line x1="0" y1="28" x2="340" y2="28" stroke="#CBD5E1"/>
+    <text x="10" y="48" font-size="10" fill="#334155">+ charge({ amount, invoiceId, method })</text>
+  </g>
+
+  <g transform="translate(925,222)">
+    <rect width="340" height="82" rx="6" fill="#FFFFFF" stroke="#334155"/>
+    <text x="170" y="20" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A">PaymentGatewayAdapter</text>
+    <line x1="0" y1="28" x2="340" y2="28" stroke="#CBD5E1"/>
+    <text x="10" y="46" font-size="10" fill="#334155">- bankSdk: SimulatedBankSDK</text>
+    <text x="10" y="64" font-size="10" fill="#334155">+ charge({ amount, invoiceId, method })</text>
+  </g>
+
+  <g transform="translate(925,336)">
+    <rect width="340" height="78" rx="6" fill="#FFFFFF" stroke="#334155"/>
+    <text x="170" y="20" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A">SimulatedBankSDK &lt;&lt;Adaptee&gt;&gt;</text>
+    <line x1="0" y1="28" x2="340" y2="28" stroke="#CBD5E1"/>
+    <text x="10" y="46" font-size="10" fill="#334155">+ processTransaction({ totalCents,</text>
+    <text x="10" y="62" font-size="10" fill="#334155">    externalRef, channel }): BankReceipt</text>
+  </g>
+  <line x1="1095" y1="222" x2="1095" y2="194" stroke="#0F766E" marker-end="url(#inherit)"/>
+  <line x1="1095" y1="304" x2="1095" y2="334" stroke="#334155" marker-end="url(#arrow)"/>
+
+  <!-- SERVICE & REPOSITORY LAYER -->
+  <rect x="30" y="465" width="1260" height="385" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/>
+  <text x="48" y="492" font-size="12" font-weight="700" fill="#0F172A">SERVICES (DEPENDENCY-INJECTED BUSINESS LOGIC) &amp; SQLITE REPOSITORIES</text>
+
+  <g transform="translate(55,516)">
+    <rect width="220" height="120" rx="8" fill="#F8FAFC" stroke="#334155"/>
+    <text x="110" y="22" text-anchor="middle" font-size="12" font-weight="700" fill="#0F172A">AuthService</text>
+    <line x1="0" y1="30" x2="220" y2="30" stroke="#CBD5E1"/>
+    <text x="10" y="50" font-size="10" fill="#334155">+ register(dto)</text>
+    <text x="10" y="68" font-size="10" fill="#334155">+ login(email, password)</text>
+    <text x="10" y="86" font-size="10" fill="#334155">+ verifyToken(token)</text>
+    <text x="10" y="104" font-size="10" fill="#334155">- userRepo</text>
+  </g>
+
+  <g transform="translate(300,516)">
+    <rect width="220" height="120" rx="8" fill="#F8FAFC" stroke="#334155"/>
+    <text x="110" y="22" text-anchor="middle" font-size="12" font-weight="700" fill="#0F172A">PatientService</text>
+    <line x1="0" y1="30" x2="220" y2="30" stroke="#CBD5E1"/>
+    <text x="10" y="50" font-size="10" fill="#334155">+ listPatients(search)</text>
+    <text x="10" y="68" font-size="10" fill="#334155">+ createPatient(dto)</text>
+    <text x="10" y="86" font-size="10" fill="#334155">+ updatePatient / deletePatient</text>
+    <text x="10" y="104" font-size="10" fill="#334155">- patientRepo</text>
+  </g>
+
+  <g transform="translate(545,516)">
+    <rect width="220" height="120" rx="8" fill="#F8FAFC" stroke="#334155"/>
+    <text x="110" y="22" text-anchor="middle" font-size="12" font-weight="700" fill="#0F172A">DoctorService</text>
+    <line x1="0" y1="30" x2="220" y2="30" stroke="#CBD5E1"/>
+    <text x="10" y="50" font-size="10" fill="#334155">+ listDoctors(specialty)</text>
+    <text x="10" y="68" font-size="10" fill="#334155">+ createDoctor(dto)</text>
+    <text x="10" y="86" font-size="10" fill="#334155">+ toggleAvailability(id)</text>
+    <text x="10" y="104" font-size="10" fill="#334155">- doctorRepo</text>
+  </g>
+
+  <g transform="translate(790,516)">
+    <rect width="235" height="120" rx="8" fill="#F8FAFC" stroke="#0F766E" stroke-width="1.5"/>
+    <text x="117" y="22" text-anchor="middle" font-size="12" font-weight="700" fill="#0F172A">AppointmentService</text>
+    <line x1="0" y1="30" x2="235" y2="30" stroke="#CBD5E1"/>
+    <text x="10" y="50" font-size="10" fill="#334155">+ bookAppointment(dto)</text>
+    <text x="10" y="68" font-size="10" fill="#334155">+ updateStatus(id, status)</text>
+    <text x="10" y="86" font-size="10" fill="#334155">- appointmentRepo, doctorRepo</text>
+    <text x="10" y="104" font-size="10" fill="#334155">- notificationService (mockable)</text>
+  </g>
+
+  <g transform="translate(1050,516)">
+    <rect width="220" height="120" rx="8" fill="#F8FAFC" stroke="#1D4ED8" stroke-width="1.5"/>
+    <text x="110" y="22" text-anchor="middle" font-size="12" font-weight="700" fill="#0F172A">BillingService</text>
+    <line x1="0" y1="30" x2="220" y2="30" stroke="#CBD5E1"/>
+    <text x="10" y="50" font-size="10" fill="#334155">+ generateInvoice(dto)</text>
+    <text x="10" y="68" font-size="10" fill="#334155">+ payInvoice(id, method)</text>
+    <text x="10" y="86" font-size="10" fill="#334155">+ getDashboardSummary()</text>
+    <text x="10" y="104" font-size="10" fill="#334155">- paymentGateway, invoiceRepo</text>
+  </g>
+
+  <!-- Repositories row -->
+  <g transform="translate(55,695)">
+    <rect width="220" height="72" rx="8" fill="#F1F5F9" stroke="#64748B"/>
+    <text x="110" y="28" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A">UserRepository</text>
+    <text x="110" y="50" text-anchor="middle" font-size="10" fill="#475569">SQLite table: users</text>
+  </g>
+  <g transform="translate(300,695)">
+    <rect width="220" height="72" rx="8" fill="#F1F5F9" stroke="#64748B"/>
+    <text x="110" y="28" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A">PatientRepository</text>
+    <text x="110" y="50" text-anchor="middle" font-size="10" fill="#475569">SQLite table: patients</text>
+  </g>
+  <g transform="translate(545,695)">
+    <rect width="220" height="72" rx="8" fill="#F1F5F9" stroke="#64748B"/>
+    <text x="110" y="28" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A">DoctorRepository</text>
+    <text x="110" y="50" text-anchor="middle" font-size="10" fill="#475569">SQLite table: doctors</text>
+  </g>
+  <g transform="translate(790,695)">
+    <rect width="235" height="72" rx="8" fill="#F1F5F9" stroke="#64748B"/>
+    <text x="117" y="28" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A">AppointmentRepository</text>
+    <text x="117" y="50" text-anchor="middle" font-size="10" fill="#475569">SQLite table: appointments</text>
+  </g>
+  <g transform="translate(1050,695)">
+    <rect width="220" height="72" rx="8" fill="#F1F5F9" stroke="#64748B"/>
+    <text x="110" y="28" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A">InvoiceRepository</text>
+    <text x="110" y="50" text-anchor="middle" font-size="10" fill="#475569">SQLite table: invoices</text>
+  </g>
+
+  <line x1="165" y1="636" x2="165" y2="693" stroke="#334155" marker-end="url(#arrow)"/>
+  <line x1="410" y1="636" x2="410" y2="693" stroke="#334155" marker-end="url(#arrow)"/>
+  <line x1="655" y1="636" x2="655" y2="693" stroke="#334155" marker-end="url(#arrow)"/>
+  <line x1="907" y1="636" x2="907" y2="693" stroke="#334155" marker-end="url(#arrow)"/>
+  <line x1="1160" y1="636" x2="1160" y2="693" stroke="#334155" marker-end="url(#arrow)"/>
+  <line x1="907" y1="516" x2="235" y2="440" stroke="#0F766E" stroke-dasharray="5 3" marker-end="url(#arrow)"/>
+  <line x1="1160" y1="516" x2="670" y2="440" stroke="#1D4ED8" stroke-dasharray="5 3" marker-end="url(#arrow)"/>
+  <line x1="1200" y1="516" x2="1095" y2="440" stroke="#B45309" stroke-dasharray="5 3" marker-end="url(#arrow)"/>
+
+  <text x="55" y="810" font-size="11" fill="#475569">Legend: Solid triangle arrow = generalization / interface implementation | Dashed arrow = uses / delegates | Solid arrow = dependency</text>
+</svg>

@@ -1,0 +1,27 @@
+{
+  "name": "medslot-clinic-manager",
+  "version": "1.0.0",
+  "description": "MedSlot — Clinic Appointment & Billing Manager (CSE 3206 Software Engineering Sessional Project)",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "build": "npm --prefix frontend run build",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "node tests/e2e/clinicFlow.e2e.mjs",
+    "lint:openapi": "vitest run tests/unit/openapi.test.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.3.0",
+    "swagger-ui-express": "^5.0.1",
+    "yaml": "^2.8.3"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^4.1.0",
+    "selenium-webdriver": "^4.41.0",
+    "vitest": "^4.1.0"
+  }
+}
