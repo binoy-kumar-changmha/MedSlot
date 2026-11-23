@@ -56,9 +56,12 @@ export class EmergencyFeeStrategy extends FeeStrategy {
       multiplier: 1.5,
       surcharge: EmergencyFeeStrategy.URGENT_SURCHARGE,
       policyNote: 'Includes urgent triage room allocation',
+      priorityBilling: true,
     };
   }
 }
+
+const MAX_DISCOUNT_PERCENT = 30;
 
 /**
  * Context class that delegates fee computation to the active FeeStrategy.
@@ -76,9 +79,14 @@ export class FeeCalculator {
   }
 
   calculate(baseFee, discountPercent = 0) {
-    // Clinic standard discount range validation
-    if (typeof discountPercent !== 'number' || !Number.isFinite(discountPercent) || discountPercent < 0 || discountPercent > 100) {
-      throw new Error('Discount percentage must be between 0 and 100');
+    // Enforce clinic policy ceiling (MAX_DISCOUNT_PERCENT = 30%)
+    if (
+      typeof discountPercent !== 'number' ||
+      !Number.isFinite(discountPercent) ||
+      discountPercent < 0 ||
+      discountPercent > MAX_DISCOUNT_PERCENT
+    ) {
+      throw new Error(`Discount percentage must be between 0 and ${MAX_DISCOUNT_PERCENT}`);
     }
 
     const grossAmount = this.strategy.calculate(baseFee);
