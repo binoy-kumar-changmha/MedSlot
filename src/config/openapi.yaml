@@ -1,0 +1,493 @@
+openapi: 3.0.3
+info:
+  title: MedSlot Clinic API
+  version: 1.0.0
+  description: >
+    REST API specification for MedSlot — Clinic Appointment & Billing Manager
+    (CSE 3206 Software Engineering Sessional self-directed tool integration).
+servers:
+  - url: http://localhost:4000
+    description: Local Express development & demo server
+tags:
+  - name: Auth
+    description: Staff registration, sign-in, and session profile
+  - name: Patients
+    description: Patient directory CRUD and search
+  - name: Doctors
+    description: Doctor directory, consultation fees, and availability toggles
+  - name: Appointments
+    description: Slot scheduling via AppointmentFactory and conflict prevention
+  - name: Billing
+    description: Strategy-based invoice generation, PaymentGatewayAdapter checkout, and KPI summary
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          example: ADMIN
+    Patient:
+      type: object
+      properties:
+        id:
+          type: integer
+        fullName:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        age:
+          type: integer
+        gender:
+          type: string
+        bloodGroup:
+          type: string
+    Doctor:
+      type: object
+      properties:
+        id:
+          type: integer
+        fullName:
+          type: string
+        specialty:
+          type: string
+        consultationFee:
+          type: number
+        available:
+          type: boolean
+    Appointment:
+      type: object
+      properties:
+        id:
+          type: integer
+        patientId:
+          type: integer
+        doctorId:
+          type: integer
+        patientName:
+          type: string
+        doctorName:
+          type: string
+        visitType:
+          type: string
+          enum: [STANDARD, FOLLOW_UP, EMERGENCY]
+        priority:
+          type: string
+          enum: [NORMAL, LOW, URGENT]
+        durationMinutes:
+          type: integer
+        appointmentDate:
+          type: string
+          example: '2026-12-01'
+        timeSlot:
+          type: string
+          example: '11:00'
+        reason:
+          type: string
+        status:
+          type: string
+          enum: [SCHEDULED, COMPLETED, CANCELLED]
+    Invoice:
+      type: object
+      properties:
+        id:
+          type: integer
+        appointmentId:
+          type: integer
+        patientId:
+          type: integer
+        patientName:
+          type: string
+        baseAmount:
+          type: number
+        discountPercent:
+          type: number
+        finalAmount:
+          type: number
+        strategyName:
+          type: string
+        status:
+          type: string
+          enum: [UNPAID, PAID]
+        paymentMethod:
+          type: string
+          nullable: true
+        transactionRef:
+          type: string
+          nullable: true
+    DashboardSummary:
+      type: object
+      properties:
+        totalPatients:
+          type: integer
+        availableDoctors:
+          type: integer
+        scheduledAppointments:
+          type: integer
+        completedAppointments:
+          type: integer
+        totalRevenue:
+          type: number
+        unpaidInvoices:
+          type: integer
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+paths:
+  /api/auth/register:
+    post:
+      tags: [Auth]
+      summary: Register a new clinic staff user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, password]
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                  minLength: 6
+      responses:
+        '201':
+          description: Staff account created
+        '409':
+          description: Email already exists
+  /api/auth/login:
+    post:
+      tags: [Auth]
+      summary: Authenticate staff user and receive Bearer token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  example: admin@medslot.local
+                password:
+                  type: string
+                  example: admin123
+      responses:
+        '200':
+          description: Authenticated session with JWT-like HMAC token
+        '401':
+          description: Invalid credentials
+  /api/auth/me:
+    get:
+      tags: [Auth]
+      summary: Fetch current authenticated user profile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Authenticated user details
+        '401':
+          description: Missing or invalid token
+  /api/patients:
+    get:
+      tags: [Patients]
+      summary: List or search patients
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Optional name or phone filter
+      responses:
+        '200':
+          description: List of matching patients
+    post:
+      tags: [Patients]
+      summary: Create a new patient record
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [fullName, phone, age]
+              properties:
+                fullName:
+                  type: string
+                phone:
+                  type: string
+                email:
+                  type: string
+                age:
+                  type: integer
+                gender:
+                  type: string
+                bloodGroup:
+                  type: string
+      responses:
+        '201':
+          description: Created patient
+  /api/patients/{id}:
+    get:
+      tags: [Patients]
+      summary: Get single patient by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Patient details
+        '404':
+          description: Patient not found
+    put:
+      tags: [Patients]
+      summary: Update patient record
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Patient'
+      responses:
+        '200':
+          description: Updated patient
+    delete:
+      tags: [Patients]
+      summary: Remove patient record
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Deleted confirmation
+  /api/doctors:
+    get:
+      tags: [Doctors]
+      summary: List doctors with optional specialty filter
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: specialty
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of doctors
+    post:
+      tags: [Doctors]
+      summary: Add a doctor profile
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [fullName, specialty, consultationFee]
+              properties:
+                fullName:
+                  type: string
+                specialty:
+                  type: string
+                consultationFee:
+                  type: number
+      responses:
+        '201':
+          description: Created doctor
+  /api/doctors/{id}/availability:
+    patch:
+      tags: [Doctors]
+      summary: Toggle doctor availability status
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Updated doctor availability
+  /api/appointments:
+    get:
+      tags: [Appointments]
+      summary: List appointments filtered by status
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [ALL, SCHEDULED, COMPLETED, CANCELLED]
+      responses:
+        '200':
+          description: List of appointments
+    post:
+      tags: [Appointments]
+      summary: Book an appointment using AppointmentFactory
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [patientId, doctorId, appointmentDate, timeSlot]
+              properties:
+                patientId:
+                  type: integer
+                doctorId:
+                  type: integer
+                visitType:
+                  type: string
+                  enum: [STANDARD, FOLLOW_UP, EMERGENCY]
+                appointmentDate:
+                  type: string
+                timeSlot:
+                  type: string
+                reason:
+                  type: string
+      responses:
+        '201':
+          description: Appointment scheduled
+        '409':
+          description: Doctor slot conflict detected
+  /api/appointments/{id}/status:
+    patch:
+      tags: [Appointments]
+      summary: Transition appointment status (COMPLETED or CANCELLED)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: [SCHEDULED, COMPLETED, CANCELLED]
+      responses:
+        '200':
+          description: Updated appointment status
+  /api/billing/summary:
+    get:
+      tags: [Billing]
+      summary: Retrieve clinic KPI summary metrics
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Summary counters and revenue
+  /api/billing/invoices:
+    get:
+      tags: [Billing]
+      summary: List all clinic invoices
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of invoices
+    post:
+      tags: [Billing]
+      summary: Generate an invoice using FeeStrategy
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [appointmentId]
+              properties:
+                appointmentId:
+                  type: integer
+                discountPercent:
+                  type: number
+      responses:
+        '201':
+          description: Invoice generated
+        '409':
+          description: Duplicate invoice for appointment
+  /api/billing/invoices/{id}/pay:
+    post:
+      tags: [Billing]
+      summary: Settle an invoice through PaymentGatewayAdapter
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                method:
+                  type: string
+                  enum: [CARD, BKASH, CASH]
+      responses:
+        '200':
+          description: Invoice paid and transaction reference recorded
+        '402':
+          description: Payment declined by gateway
