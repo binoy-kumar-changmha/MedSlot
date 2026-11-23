@@ -52,4 +52,9 @@ describe('FeeStrategy & FeeCalculator (Behavioral — Strategy)', () => {
     expect(() => createFeeStrategyForVisitType('UNKNOWN')).toThrow(/Unsupported visit type/i);
     expect(() => new StandardFeeStrategy().calculate(-50)).toThrow(/non-negative/i);
   });
+
+  it('rejects discounts exceeding the 30% clinic discount cap', () => {
+    const calculator = new FeeCalculator(new StandardFeeStrategy());
+    expect(() => calculator.calculate(1000, 45)).toThrow(/between 0 and 30/i);
+  });
 });
