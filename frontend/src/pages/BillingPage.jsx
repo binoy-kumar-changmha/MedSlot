@@ -237,12 +237,12 @@ export function BillingPage() {
             </div>
             <div>
               <label className="mb-1 block text-xs font-medium text-slate-700">
-                Discount Percentage (0–100)
+                Discount Percentage (0–30)
               </label>
               <input
                 type="number"
                 min={0}
-                max={100}
+                max={30}
                 data-testid="invoice-discount-input"
                 value={discountPercent}
                 onChange={(e) => setDiscountPercent(e.target.value)}
