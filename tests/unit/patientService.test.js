@@ -52,4 +52,21 @@ describe('PatientService (with mocked patientRepository)', () => {
     expect(() => service.getPatientById(999)).toThrow(/not found/i);
     expect(() => service.deletePatient(999)).toThrow(/not found/i);
   });
+
+  it('updates and deletes an existing patient record', () => {
+    const patientRepo = {
+      findById: vi.fn().mockReturnValue({ id: 5, fullName: 'Old Name' }),
+      update: vi.fn().mockImplementation((id, dto) => ({ id, ...dto })),
+      delete: vi.fn().mockReturnValue(true),
+    };
+    const service = createPatientService({ patientRepo });
+
+    const updated = service.updatePatient(5, {
+      fullName: 'Updated Name',
+      phone: '01711111111',
+      age: 30,
+    });
+    expect(updated.fullName).toBe('Updated Name');
+    expect(service.deletePatient(5)).toEqual({ deleted: true });
+  });
 });

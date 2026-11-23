@@ -79,4 +79,22 @@ describe('AppointmentService (with mocked repositories and notificationService)'
 
     expect(() => service.updateStatus(3, 'COMPLETED')).toThrow(/cannot be reopened/i);
   });
+
+  it('lists appointments and transitions SCHEDULED to COMPLETED with notice', () => {
+    const appointmentRepo = {
+      findAll: vi.fn().mockReturnValue([{ id: 4, status: 'SCHEDULED' }]),
+      findById: vi.fn().mockReturnValue({ id: 4, status: 'SCHEDULED' }),
+      updateStatus: vi.fn().mockReturnValue({ id: 4, status: 'COMPLETED' }),
+    };
+    const notificationService = { sendAppointmentNotice: vi.fn() };
+    const service = createAppointmentService({ appointmentRepo, notificationService });
+
+    expect(service.listAppointments('SCHEDULED')).toHaveLength(1);
+    const updated = service.updateStatus(4, 'COMPLETED');
+    expect(updated.status).toBe('COMPLETED');
+    expect(notificationService.sendAppointmentNotice).toHaveBeenCalledWith(
+      expect.objectContaining({ event: 'COMPLETED', appointment: updated })
+    );
+    expect(() => service.updateStatus(4, 'BOGUS')).toThrow(/Invalid appointment status/i);
+  });
 });

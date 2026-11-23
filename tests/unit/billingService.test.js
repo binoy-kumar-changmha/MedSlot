@@ -98,4 +98,24 @@ describe('BillingService (with mocked repositories and paymentGateway)', () => {
       unpaidInvoices: 2,
     });
   });
+
+  it('lists invoices and guards against cancelled appointments, duplicates, and double payments', async () => {
+    const invoiceRepo = {
+      findAll: vi.fn().mockReturnValue([{ id: 1 }]),
+      findByAppointmentId: vi.fn().mockReturnValue({ id: 1 }),
+      findById: vi.fn().mockReturnValue({ id: 1, status: 'PAID' }),
+    };
+    const appointmentRepo = {
+      findById: vi
+        .fn()
+        .mockReturnValueOnce({ id: 9, status: 'CANCELLED' })
+        .mockReturnValueOnce({ id: 10, status: 'SCHEDULED', visitType: 'STANDARD', doctorBaseFee: 800 }),
+    };
+
+    const service = createBillingService({ invoiceRepo, appointmentRepo });
+    expect(service.listInvoices()).toHaveLength(1);
+    expect(() => service.generateInvoice({ appointmentId: 9 })).toThrow(/cancelled/i);
+    expect(() => service.generateInvoice({ appointmentId: 10 })).toThrow(/already exists/i);
+    await expect(service.payInvoice(1)).rejects.toThrow(/already been paid/i);
+  });
 });

@@ -84,5 +84,10 @@ describe('PaymentGatewayAdapter (Structural — Adapter)', () => {
     expect(receipt.settledAmount).toBe(800);
     expect(receipt.channel).toBe('COUNTER_CASH');
     expect(receipt.transactionRef).toMatch(/^BANK-INV-9-/);
+
+    const unsupported = await adapter.charge({ amount: 500, invoiceId: 10, method: 'CRYPTO' });
+    expect(unsupported.approved).toBe(false);
+    expect(unsupported.reason).toMatch(/Unsupported payment channel/i);
+    await expect(adapter.charge({ amount: 500, method: 'CARD' })).rejects.toThrow(/invoiceId/i);
   });
 });
